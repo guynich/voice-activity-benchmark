@@ -1,5 +1,5 @@
 #
-# Copyright 2021 Picovoice Inc.
+# Copyright 2021-2025 Picovoice Inc.
 #
 # You may not use this file except in compliance with the license.
 # A copy of the license is located in the "LICENSE" file accompanying this source.
@@ -14,7 +14,7 @@ from collections import namedtuple
 from enum import Enum
 
 import numpy as np
-
+import pvcobra
 from mixer import DEFAULT_SAMPLERATE
 
 
@@ -73,8 +73,7 @@ class CobraEngine(Engine):
     _cache = dict()
 
     def __init__(self, threshold, access_key):
-        import pvcobra
-        self._cobra = pvcobra.Cobra(access_key=access_key, library_path=pvcobra.LIBRARY_PATH)
+        self._cobra = pvcobra.create(access_key=access_key)
         self._threshold = threshold
 
     def process(self, pcm, frame_key):
