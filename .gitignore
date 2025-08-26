@@ -6,3 +6,4 @@
 !requirements.txt
 venv
 webrtcrnnvad_probs.bin
+.DS_Store

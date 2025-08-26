@@ -30,6 +30,7 @@ Binary wheels are available for easy installation by using fork [py-webrtcvad-wh
 - [Cobra](https://github.com/Picovoice/Cobra) which is included as submodules in this repository,
 or can be installed using [PyPI](https://pypi.org/project/pvcobra/). Version 1.2.0.
 - [Silero VAD](https://github.com/snakers4/silero-vad) which can be installed using [PyPI](https://pypi.org/project/silero-vad/). Version 5.1.
+- [TEN VAD](https://github.com/TEN-framework/ten-vad/pull/61).  This repo assumes MacOS on x86_64 (e.g.: Intel) running Python 3.12.  Otherwise run the `example_onnx` build for a Python extension module with your OS and CPU architecture and Python version.  Then move the generated *.so file to `lib/` folder.
 - WebRTC RNN VAD, through a dummy implementation using a [CLI demo](https://github.com/daanzu/webrtc_rnnvad).
 
 
@@ -54,12 +55,41 @@ git clone https://github.com/Picovoice/voice-activity-benchmark.git
 Make sure the Python packages in the [requirements.txt](/requirements.txt) are properly installed for your Python
 version as Python bindings are used for running the engines.
 
+Download and extract ONNX Runtime v1.22.0 for TEN VAD model with my setup (macOS
+Intel x86_64).
+```bash
+cd
+curl -OL https://github.com/microsoft/onnxruntime/releases/download/v1.22.0/onnxruntime-osx-x86_64-1.22.0.tgz
+tar -xzf onnxruntime-osx-x86_64-1.22.0.tgz
+rm onnxruntime-osx-x86_64-1.22.0.tgz
+```
+
 ### Running the Benchmark
 
 Usage information can be retrieved via
 
 ```bash
-python benchmark.py -h
+python3 benchmark.py -h
+```
+
+Benchmark commands.  Tested on macOS Intel x86_64 with Python 3.12.
+```bash
+tmux
+
+cd
+source ./venv_pv_vab/bin/activate
+
+cd voice-activity-benchmark
+
+# Set your dataset paths and PicoVoice access key.
+LIBRISPEECH="--librispeech_dataset_path $HOME/Downloads/Librispeech/test-clean"
+DEMAND="--demand_dataset_path $HOME/Downloads/demand"
+ACCESS_KEY=<your token>
+
+python3 benchmark.py $LIBRISPEECH $DEMAND --engine Cobra --access_key $ACCESS_KEY
+python3 benchmark.py $LIBRISPEECH $DEMAND --engine Silero
+python3 benchmark.py $LIBRISPEECH $DEMAND --engine TEN-VAD
+python3 benchmark.py $LIBRISPEECH $DEMAND --engine WebRTC
 ```
 
 The runtime benchmark is contained in the [runtime](/runtime) folder. Use the following commands to build and run the runtime benchmark:
